@@ -1,31 +1,18 @@
-# Python
-__pycache__/
-*.py[cod]
-.pytest_cache/
-
-# Virtual environment
+# Python virtual environment
 .venv/
 venv/
-env/
 
-# Environmentvariables/secrets
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables and secrets
 .env
 .env.*
-!.env.example
 
-# VS Code
+# IDE files
 .vscode/
-
-# Other IDEs
 .idea/
 
-#OS
-.DS_Store
-Thumbs.db
-
-#Logs
-*.log
-
-# Local data
-data/
-outputs/
+# Test cache
+.pytest_cache/
