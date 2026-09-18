@@ -1,5 +1,24 @@
 ### 16 - SEP -2026 
 ### Day 1
 
+### Day 2 — PostgreSQL Foundation
 
+Completed:
+- Verified PostgreSQL 16.13 installation.
+- Identified the active PostgreSQL port: 5433.
+- Connected successfully using the postgres administrator.
+- Created clinical_ops_user.
+- Created clinical_ops_db.
+- Verified application-user authentication.
+- Executed SQL connection test successfully.
+
+Evidence:
+SELECT current_database(), current_user;
+Result: clinical_ops_db | clinical_ops_user
+
+SELECT 1 AS connection_test;
+Result: 1
+
+Next:
+Connect FastAPI to PostgreSQL using Psycopg.
 
