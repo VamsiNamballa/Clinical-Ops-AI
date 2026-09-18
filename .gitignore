@@ -16,3 +16,24 @@ __pycache__/
 
 # Test cache
 .pytest_cache/
+
+# Additional environments
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local generated data
+data/
+outputs/
+
+# Python bytecode
+*.pyo
+*.pyd
+
+# Allow example configuration
+!.env.example
