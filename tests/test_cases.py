@@ -6,9 +6,9 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_patch_case_valid_status():
+def test_patch_case_valid_status(test_case):
     response = client.patch(
-        "/cases/1",
+        f"/cases/{test_case}",
         json={"status": "closed"},
     )
 
@@ -16,13 +16,13 @@ def test_patch_case_valid_status():
 
     data = response.json()
 
-    assert data["id"] == 1
+    assert data["id"] == test_case
     assert data["status"] == "closed"
 
 
 def test_patch_case_not_found():
     response = client.patch(
-        "/cases/999",
+        "/cases/999999",
         json={"status": "in_progress"},
     )
 
@@ -30,9 +30,9 @@ def test_patch_case_not_found():
     assert response.json() == {"detail": "Case Not Found"}
 
 
-def test_patch_case_invalid_status():
+def test_patch_case_invalid_status(test_case):
     response = client.patch(
-        "/cases/1",
+        f"/cases/{test_case}",
         json={"status": "random_status"},
     )
 
