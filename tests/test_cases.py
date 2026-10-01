@@ -104,3 +104,37 @@ def test_get_cases_contains_created_case(case_cleanup):
     assert len(matching_cases) == 1
     assert matching_cases[0]["patient_id"] == "TEST-LIST-001"
     assert matching_cases[0]["status"] == "open"
+    
+def test_delete_case(case_cleanup):
+    create_response = client.post(
+        "/cases",
+        json={
+            "patient_id": "TEST-DELETE-001",
+            "status": "open",
+        },
+    )
+
+    assert create_response.status_code == 200
+
+    case_id = create_response.json()["id"]
+
+    delete_response = client.delete(f"/cases/{case_id}")
+
+    assert delete_response.status_code == 200
+    assert delete_response.json() == {
+        "message": "Case Deleted",
+        "id": case_id,
+    }
+
+    get_response = client.get(f"/cases/{case_id}")
+
+    assert get_response.status_code == 404
+
+
+def test_delete_case_not_found():
+    response = client.delete("/cases/999999")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Case Not Found"
+    }

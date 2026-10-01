@@ -37,3 +37,5 @@ outputs/
 
 # Allow example configuration
 !.env.example
+
+.env.compose

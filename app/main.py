@@ -157,4 +157,30 @@ def update_case(case_id:int, case: CaseUpdate):
         "status":row[2],
         "created_at": row[3]
     }
+    
+@app.delete("/cases/{case_id}")
+def delete_case(case_id: int):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                DELETE FROM cases
+                WHERE id=%s
+                RETURNING id;
+                """,
+                (case_id,)
+            )
+
+            row = cur.fetchone()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Case Not Found"
+        )
+
+    return {
+        "message": "Case Deleted",
+        "id": row[0]
+    }
 # End of Patch End Points
