@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from fastapi import HTTPException
 from typing import Literal
 
+from app.rag.retriever import search_guidelines
+
 
 from app.db import get_connection
 
@@ -14,7 +16,7 @@ app=FastAPI(title="Clinical Ops AI")
 class CaseCreate(BaseModel):
     patient_id: str
     status: str
-    
+
 #Using the Below class, we update Existing cases
 class CaseUpdate(BaseModel):
     status: Literal["open", "in_progress", "closed"]
@@ -28,7 +30,7 @@ class CaseUpdate(BaseModel):
 def hello():
     return ("Hello")
 
-# HEalth Check 
+# HEalth Check
 # This end point checks if the FastAPI is running
 # This runs even if PostGreSQL Server is down
 @app.get("/health")
@@ -43,13 +45,13 @@ def db_health():
         with conn.cursor() as cor:
             cor.execute("Select 1;")
             result=cor.fetchone()
-    
+
     return {
          "database": "ok",
          "result": result[0]
     }
 
-## This GET end points helps us with an SQL Query that 
+## This GET end points helps us with an SQL Query that
 ## fetches all the details based on the given case id
 @app.get("/cases/{case_id}")
 def get_case(case_id:int):
@@ -63,12 +65,12 @@ def get_case(case_id:int):
                 """,
                 (case_id,)
             )
-            
+
             row=cur.fetchone()
-            
+
     if row is None:
         raise HTTPException(status_code=404, detail="Case Not Found")
-    
+
     return{
         "id":row[0],
         "patient_id":row[1],
@@ -76,8 +78,8 @@ def get_case(case_id:int):
         "created_at":row[3]
     }
 
-## This GET endpoint uses an SQL query that fetches 
-## All the available cases 
+## This GET endpoint uses an SQL query that fetches
+## All the available cases
 @app.get("/cases")
 def get_cases():
     with get_connection() as conn:
@@ -87,7 +89,7 @@ def get_cases():
                 SELECT id, patient_id, status, created_at
                 FROM cases
                 ORDER BY id;
-                """   
+                """
             )
             rows=cur.fetchall()
     return [
@@ -99,12 +101,23 @@ def get_cases():
         }
         for row in rows
     ]
-  
+
+#   RAG Endpoint
+@app.get("/rag/search")
+def rag_search(query:str):
+    result=search_guidelines(query)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No Relevant Guideline Found"
+        )
+    return result
 # The Get Check points Ends here
 
-# The POST Checkpoints starts here 
+# The POST Checkpoints starts here
 
-## The below POST end point runs an SQL query that 
+## The below POST end point runs an SQL query that
 ## creates a new Case dynamically
 @app.post("/cases")
 def create_case(case: CaseCreate):
@@ -127,7 +140,7 @@ def create_case(case: CaseCreate):
         "status": row[2],
         "created_at": row[3]
     }
-    
+
 # The POST End points ends here
 
 # Start of PATCH End Points
@@ -147,17 +160,17 @@ def update_case(case_id:int, case: CaseUpdate):
                 (case.status, case_id)
             )
             row=cur.fetchone()
-    
+
     if row is None:
         raise HTTPException(status_code=404, detail="Case Not Found")
-    
+
     return {
         "id":row[0],
         "patient_id":row[1],
         "status":row[2],
         "created_at": row[3]
     }
-    
+
 @app.delete("/cases/{case_id}")
 def delete_case(case_id: int):
     with get_connection() as conn:

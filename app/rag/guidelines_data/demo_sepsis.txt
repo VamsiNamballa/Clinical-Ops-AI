@@ -1,0 +1,18 @@
+Clinical Ops AI Demo Guideline
+Synthetic educational content only. Not clinical guidance.
+
+Topic: Sepsis workflow demonstration
+
+This document exists to test retrieval behavior in the Clinical Ops AI project.
+
+Keywords:
+sepsis
+lactate
+infection
+risk
+clinical guideline
+
+For this software demonstration, questions containing sepsis or lactate
+should retrieve this document as relevant context.
+
+This file must not be treated as clinically validated medical guidance.
